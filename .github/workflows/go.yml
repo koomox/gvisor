@@ -3,14 +3,8 @@
 # workflow simply generates and pushes the branch, as long as appropriate
 # permissions are available.
 name: "Go"
-"on":
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-      - "feature/**"
+on:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
