@@ -1,0 +1,33 @@
+name: Bazel Build gvisor
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          ref: main
+
+      - name: Install Bazel
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Build pkg//*
+        run: |
+          bazel build //pkg/buffer
+
+      - name: bazel info
+        run: |
+          echo $(bazel info bazel-bin)
+          bazel cquery 'outputs(//pkg/buffer:all)'
+          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+                
+      - name: Upload
+        uses: actions/upload-artifact@master
+        with:
+          name: gvisor${{ env.FILE_DATE }}
+          path: ./pkg/buffer
